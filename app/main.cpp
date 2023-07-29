@@ -5,7 +5,7 @@
 const int DefaultWidth = 1920;
 const int DefaultHeight = 1080;
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+void OnFrameBufferSizeChanged(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
 }
@@ -14,6 +14,13 @@ void processInput(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+}
+
+void OnEscapeKeyPressed(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
+        glfwSetWindowShouldClose(window, true);
+    }
 }
 
 int main()
@@ -36,16 +43,15 @@ int main()
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         std::cout << "Failed to initialize GLAD" << std::endl;
-        return -1;
+        return EXIT_FAILURE;
     }
 
     glViewport(0, 0, DefaultWidth, DefaultHeight);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetFramebufferSizeCallback(window, OnFrameBufferSizeChanged);
+    glfwSetKeyCallback(window, OnEscapeKeyPressed);
 
     while (!glfwWindowShouldClose(window))
     {
-        processInput(window);
-
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -53,5 +59,5 @@ int main()
         glfwSwapBuffers(window);
     }
     glfwTerminate();
-    return 0;
+    return EXIT_SUCCESS;
 }
