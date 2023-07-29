@@ -1,6 +1,9 @@
+#include <iostream>
+#include <fstream>
+#include<sstream>
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <iostream>
 #include "GLErrorCheck.h"
 #include "Triangle.h"
 #include "Shader.h"
@@ -31,6 +34,32 @@ static void OnEscapeKeyPressed(GLFWwindow* window, int key, int scancode, int ac
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
         glfwSetWindowShouldClose(window, true);
+    }
+}
+
+static const std::string LoadFileString(const char* filePath)
+{
+    std::ifstream fileStream;
+
+    fileStream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+    try
+    {
+        // open files
+        fileStream.open(filePath);
+
+        std::stringstream fileStringStream;
+        // read file's buffer contents into streams
+        fileStringStream << fileStream.rdbuf();
+        // close file handlers
+        fileStream.close();
+        return fileStringStream.str();
+    }
+    catch (std::ifstream::failure e)
+    {
+        std::cerr << "FILE_NOT_SUCCESFULLY_READ: " << filePath << std::endl;
+        std::cerr << e.what() << std::endl;
+        DEBUG_THROW;
+        return std::string();
     }
 }
 
@@ -74,12 +103,16 @@ int main()
     GL_EXEC(glBufferData(GL_ARRAY_BUFFER, vertexBufferSize, TriangleShapeVertices.data(), GL_STATIC_DRAW));
 
     {
-        auto ndcShader = Shader(VertexProgram, FragmentProgram);
+
+        auto vertexProgram = LoadFileString("Shaders\\ndc.vert");
+        auto fragmentProgram = LoadFileString("Shaders\\ndc.frag");
+        auto ndcShader = Shader(vertexProgram.c_str(), fragmentProgram.c_str());
 
         const unsigned int vertexAttributeLocation = ndcShader.GetAttributeLocation("inPosition");
         const unsigned int ElementPerVertex = 3;
         const unsigned int VertexStride = ElementPerVertex * sizeof(float);
         const void* const VertexOffsetPointer = (void*)0;
+
         // vao[location] <- vbo[0]
         GL_EXEC(glVertexAttribPointer(vertexAttributeLocation, ElementPerVertex, GL_FLOAT, GL_FALSE, VertexStride, VertexOffsetPointer));
         //The reason why the fuck we need this: https://www.gamedev.net/forums/topic/655785-is-glenablevertexattribarray-redundant/
