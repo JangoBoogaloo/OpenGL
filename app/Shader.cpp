@@ -26,12 +26,12 @@ Shader::Shader(const char* vertexProgram, const char* fragmentProgram)
 	GL_EXEC(glDeleteShader(fragmentShader));
 }
 
-const unsigned int Shader::Id()
+unsigned int Shader::Id()
 {
 	return programId;
 }
 
-const unsigned int Shader::GetAttributeLocation(const std::string& name)
+unsigned int Shader::GetAttributeLocation(const std::string& name)
 {
 	unsigned int attributeLocation;
 	GL_EXEC(attributeLocation = glGetAttribLocation(programId, name.c_str()));

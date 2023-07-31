@@ -10,6 +10,7 @@
 
 const int DefaultWidth = 1920;
 const int DefaultHeight = 1080;
+const unsigned int ElementPerVertex = 3;
 
 const char* const VertexProgram =
 "#version 460 core\n"
@@ -104,14 +105,13 @@ int main()
 
     {
 
-        auto vertexProgram = LoadFileString("Shaders\\ndc.vert");
-        auto fragmentProgram = LoadFileString("Shaders\\ndc.frag");
+        const auto vertexProgram = LoadFileString("Shaders\\ndc.vert");
+        const auto fragmentProgram = LoadFileString("Shaders\\ndc.frag");
         auto ndcShader = Shader(vertexProgram.c_str(), fragmentProgram.c_str());
 
-        const unsigned int vertexAttributeLocation = ndcShader.GetAttributeLocation("inPosition");
-        const unsigned int ElementPerVertex = 3;
-        const unsigned int VertexStride = ElementPerVertex * sizeof(float);
-        const void* const VertexOffsetPointer = (void*)0;
+        const auto vertexAttributeLocation = ndcShader.GetAttributeLocation("inPosition");
+        const auto VertexStride = ElementPerVertex * sizeof(float);
+        const auto VertexOffsetPointer = (void*)0;
 
         // vao[location] <- vbo[0]
         GL_EXEC(glVertexAttribPointer(vertexAttributeLocation, ElementPerVertex, GL_FLOAT, GL_FALSE, VertexStride, VertexOffsetPointer));
