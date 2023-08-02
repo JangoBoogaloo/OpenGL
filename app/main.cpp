@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
-#include<sstream>
+#include <sstream>
+#include <cmath>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -29,16 +30,51 @@ const char* const FragmentProgram =
 "   FragColor = vec4(1.0f, 1.0f, 0.2f, 1.0f);"
 "}";
 
+float roll = 0;
+float yaw = 0;
+float pitch = 0;
+
+auto camera = Camera();
+glm::vec3 eye(0, 0, 1);
+glm::vec3 center(0, 0, 0);
+glm::vec3 upDirection(0, 1, 0);
+const auto fovYDegree = 60.0f, zNear = 0.1f, zFar = 99.0f;
+
 static void OnFrameBufferSizeChanged(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
 }
 
-static void OnEscapeKeyPressed(GLFWwindow* window, int key, int scancode, int action, int mods)
+static void OnKeyBoardPressed(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
         glfwSetWindowShouldClose(window, true);
+        return;
     }
+    if (action == GLFW_RELEASE) return;
+    switch (key) {
+    case GLFW_KEY_Y:
+        yaw += 1.0f;
+        break;
+    case GLFW_KEY_R:
+        roll += 1.0f;
+        break;
+    case GLFW_KEY_P:
+        pitch += 1.0f;
+        break;
+    case GLFW_KEY_SPACE:
+        yaw = 0;
+        pitch = 0;
+        roll = 0;
+        break;
+    }
+}
+
+static void OnMouseScroll(GLFWwindow* window, double xoffset, double yoffset)
+{
+    eye.z += yoffset;
+    eye.z = fmax(1, eye.z);
+    camera.LookAt(eye, center, upDirection);
 }
 
 static const std::string LoadFileString(const char* filePath)
@@ -90,10 +126,11 @@ int main()
         return EXIT_FAILURE;
     }
 
-    glViewport(0, 0, DefaultWidth, DefaultHeight);
     glfwSetFramebufferSizeCallback(window, OnFrameBufferSizeChanged);
-    glfwSetKeyCallback(window, OnEscapeKeyPressed);
+    glfwSetKeyCallback(window, OnKeyBoardPressed);
+    glfwSetScrollCallback(window, OnMouseScroll);
 
+    glViewport(0, 0, DefaultWidth, DefaultHeight);
 
     //Vertex buffer object
     unsigned int vao;
@@ -108,7 +145,6 @@ int main()
     GL_EXEC(glBufferData(GL_ARRAY_BUFFER, vertexBufferSize, TriangleShapeVertices.data(), GL_STATIC_DRAW));
 
     {
-
         const auto vertexProgram = LoadFileString("Shaders\\mvp.vert");
         const auto fragmentProgram = LoadFileString("Shaders\\ndc.frag");
         auto ndcShader = Shader(vertexProgram.c_str(), fragmentProgram.c_str());
@@ -116,16 +152,12 @@ int main()
         const auto vertexAttributeLocation = ndcShader.GetAttributeLocation("inPosition");
         const auto VertexStride = ElementPerVertex * sizeof(float);
         const auto VertexOffsetPointer = (void*)0;
+
         auto model = Model();
         model.Scale(1, 1, 1);
-        auto camera = Camera();
-        const float fovYDegree = 60;
-        const float zNear = 0.1f, zFar = 99.0f;
         camera.PerspectiveProjection(fovYDegree, ((float)DefaultWidth) / ((float)DefaultHeight), zNear, zFar);
-        glm::vec3 eye(0, 0, 1);
-        glm::vec3 center(0, 0, 0);
-        glm::vec3 upDirection(0, 1, 0);
         camera.LookAt(eye, center, upDirection);
+
         // vao[location] <- vbo[0]
         GL_EXEC(glVertexAttribPointer(vertexAttributeLocation, ElementPerVertex, GL_FLOAT, GL_FALSE, VertexStride, VertexOffsetPointer));
         //The reason why the fuck we need this: https://www.gamedev.net/forums/topic/655785-is-glenablevertexattribarray-redundant/
@@ -133,6 +165,8 @@ int main()
 
         while (!glfwWindowShouldClose(window))
         {
+            model.Rotate(yaw, pitch, roll);
+
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
             ndcShader.Use();
