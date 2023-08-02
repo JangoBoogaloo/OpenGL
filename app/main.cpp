@@ -4,9 +4,12 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+
 #include "GLErrorCheck.h"
 #include "Triangle.h"
 #include "Shader.h"
+#include "Model.h"
+#include "Camera.h"
 
 const int DefaultWidth = 1920;
 const int DefaultHeight = 1080;
@@ -53,6 +56,7 @@ static const std::string LoadFileString(const char* filePath)
         fileStringStream << fileStream.rdbuf();
         // close file handlers
         fileStream.close();
+        std::cout << "Loaded file: " << filePath << std::endl;
         return fileStringStream.str();
     }
     catch (std::ifstream::failure e)
@@ -105,14 +109,23 @@ int main()
 
     {
 
-        const auto vertexProgram = LoadFileString("Shaders\\ndc.vert");
+        const auto vertexProgram = LoadFileString("Shaders\\mvp.vert");
         const auto fragmentProgram = LoadFileString("Shaders\\ndc.frag");
         auto ndcShader = Shader(vertexProgram.c_str(), fragmentProgram.c_str());
 
         const auto vertexAttributeLocation = ndcShader.GetAttributeLocation("inPosition");
         const auto VertexStride = ElementPerVertex * sizeof(float);
         const auto VertexOffsetPointer = (void*)0;
-
+        auto model = Model();
+        model.Scale(1, 1, 1);
+        auto camera = Camera();
+        const float fovYDegree = 60;
+        const float zNear = 0.1f, zFar = 99.0f;
+        camera.PerspectiveProjection(fovYDegree, ((float)DefaultWidth) / ((float)DefaultHeight), zNear, zFar);
+        glm::vec3 eye(0, 0, 1);
+        glm::vec3 center(0, 0, 0);
+        glm::vec3 upDirection(0, 1, 0);
+        camera.LookAt(eye, center, upDirection);
         // vao[location] <- vbo[0]
         GL_EXEC(glVertexAttribPointer(vertexAttributeLocation, ElementPerVertex, GL_FLOAT, GL_FALSE, VertexStride, VertexOffsetPointer));
         //The reason why the fuck we need this: https://www.gamedev.net/forums/topic/655785-is-glenablevertexattribarray-redundant/
@@ -122,8 +135,10 @@ int main()
         {
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
-
             ndcShader.Use();
+            ndcShader.SetUniformMatrix4fv("model", glm::transpose(model.GetModelMatrix()));
+            ndcShader.SetUniformMatrix4fv("view", glm::transpose(camera.GetView()));
+            ndcShader.SetUniformMatrix4fv("projection", glm::transpose(camera.GetProjection()));
             GL_EXEC(glBindVertexArray(vao));
             GL_EXEC(glDrawArrays(GL_TRIANGLES, 0, TriangleShapeVertices.size()));
             glfwPollEvents();
