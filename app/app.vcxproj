@@ -139,18 +139,25 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="GLErrorCheck.h" />
+    <ClInclude Include="Model.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Triangle.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Shader\ndc.frag" />
-    <Text Include="Shader\ndc.vert" />
+    <Text Include="Shaders\mvp.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\ndc.frag" />
+    <None Include="Shaders\ndc.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

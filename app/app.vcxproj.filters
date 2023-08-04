@@ -27,6 +27,12 @@
     <ClCompile Include="Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
@@ -38,13 +44,24 @@
     <ClInclude Include="Triangle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Shader\ndc.frag">
+    <Text Include="Shaders\mvp.vert">
       <Filter>Shaders</Filter>
     </Text>
-    <Text Include="Shader\ndc.vert">
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\ndc.frag">
       <Filter>Shaders</Filter>
-    </Text>
+    </None>
+    <None Include="Shaders\ndc.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

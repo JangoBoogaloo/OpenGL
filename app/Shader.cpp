@@ -1,5 +1,6 @@
 #include "Shader.h"
 #include "GLErrorCheck.h"
+#include <gtc/type_ptr.hpp>
 
 Shader::Shader(const char* vertexProgram, const char* fragmentProgram)
 {
@@ -41,6 +42,12 @@ unsigned int Shader::GetAttributeLocation(const std::string& name)
 void Shader::Use()
 {
 	GL_EXEC(glUseProgram(programId));
+}
+
+void Shader::SetUniformMatrix4fv(const std::string& name, const glm::mat4 matrix) {
+	GLuint uniformLocation;
+	GL_EXEC(uniformLocation = glGetUniformLocation(programId, name.c_str()));
+	GL_EXEC(glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(matrix)));
 }
 
 Shader::~Shader() 
