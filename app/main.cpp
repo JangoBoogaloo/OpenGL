@@ -11,24 +11,11 @@
 #include "Shader.h"
 #include "Model.h"
 #include "Camera.h"
+#include "Texture.h"
 
 const int DefaultWidth = 1920;
 const int DefaultHeight = 1080;
 const unsigned int ElementPerVertex = 3;
-
-const char* const VertexProgram =
-"#version 460 core\n"
-"layout(location = 0) in vec3 inPosition;"
-"void main() {"
-"   gl_Position = vec4(inPosition.x, inPosition.y, inPosition.z, 1.0);"
-"}";
-
-const char* const FragmentProgram =
-"#version 460 core\n"
-"out vec4 FragColor;"
-"void main() {"
-"   FragColor = vec4(1.0f, 1.0f, 0.2f, 1.0f);"
-"}";
 
 float roll = 0;
 float yaw = 0;
@@ -104,6 +91,26 @@ static const std::string LoadFileString(const char* filePath)
     }
 }
 
+static unsigned int OnLoadTexture(int width, int height, int nrChannel, const unsigned char* data)
+{
+    unsigned int textureID;
+    GL_EXEC(glGenTextures(1, &textureID));
+    GL_EXEC(glBindTexture(GL_TEXTURE_2D, textureID));
+    // set the texture wrapping/filtering options (on the currently bound texture object)
+    GL_EXEC(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+    GL_EXEC(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+
+    //When scale down, make it more blocked pattern
+    GL_EXEC(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+    //When scale up, make it more linear pattern
+    GL_EXEC(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+
+    GL_EXEC(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data));
+    GL_EXEC(glGenerateMipmap(GL_TEXTURE_2D));
+    GL_EXEC(glBindTexture(GL_TEXTURE_2D, 0));
+    return textureID;
+}
+
 int main()
 {
     glfwInit();
@@ -125,7 +132,6 @@ int main()
         std::cout << "Failed to initialize GLAD" << std::endl;
         return EXIT_FAILURE;
     }
-
     glfwSetFramebufferSizeCallback(window, OnFrameBufferSizeChanged);
     glfwSetKeyCallback(window, OnKeyBoardPressed);
     glfwSetScrollCallback(window, OnMouseScroll);
@@ -147,6 +153,8 @@ int main()
     {
         const auto vertexProgram = LoadFileString("Shaders\\mvp.vert");
         const auto fragmentProgram = LoadFileString("Shaders\\ndc.frag");
+        auto texture = Texture("Textures\\coordinate.jpg");
+        texture.Load(OnLoadTexture);
         auto ndcShader = Shader(vertexProgram.c_str(), fragmentProgram.c_str());
 
         const auto vertexAttributeLocation = ndcShader.GetAttributeLocation("inPosition");
