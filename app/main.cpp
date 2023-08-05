@@ -144,7 +144,7 @@ int main()
         GL_EXEC(glEnableVertexAttribArray(TextureLayoutLocation));
 
         glfwSetFramebufferSizeCallback(window, Input::OnFrameBufferSizeChanged);
-        glfwSetKeyCallback(window, Input::OnKeyBoardPressed);
+        glfwSetKeyCallback(window, Input::OnKey);
         glfwSetScrollCallback(window, Input::OnMouseScroll);
 
         while (!glfwWindowShouldClose(window))

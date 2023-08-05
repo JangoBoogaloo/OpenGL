@@ -7,7 +7,7 @@ class AppController :
     public IFrameBufferSizeListener
 {
 public:
-    void OnKeyBoardPressed(GLFWwindow* window, int key, int scancode, int action, int mods);
+    void OnKey(GLFWwindow* window, int key, int scancode, int action, int mods);
     void OnFrameBufferSizeChanged(GLFWwindow* window, int width, int height);
 };
 

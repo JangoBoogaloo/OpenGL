@@ -86,7 +86,7 @@ Model::Model()
 	translationM = glm::mat4(1);
 }
 
-void Model::OnKeyBoardPressed(GLFWwindow* window, int key, int scancode, int action, int mods)
+void Model::OnKey(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	if (action == GLFW_RELEASE) return;
 	switch (key) {

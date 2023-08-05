@@ -9,7 +9,7 @@ public:
 	glm::vec3 RotateYPR;
 	glm::vec3 TranslateXYZ;
 	const glm::mat4 GetModelMatrix();
-	void OnKeyBoardPressed(GLFWwindow* window, int key, int scancode, int action, int mods);
+	void OnKey(GLFWwindow* window, int key, int scancode, int action, int mods);
 	Model();
 
 private:

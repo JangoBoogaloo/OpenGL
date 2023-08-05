@@ -11,9 +11,9 @@ public:
     static std::vector<IKeyListener*> KeyListeners;
     static std::vector<IFrameBufferSizeListener*> FrameBufferSizeListeners;
 
-    static void OnKeyBoardPressed(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    static void OnKey(GLFWwindow* window, int key, int scancode, int action, int mods) {
         for (auto listener : KeyListeners) {
-            listener->OnKeyBoardPressed(window, key, scancode, action, mods);
+            listener->OnKey(window, key, scancode, action, mods);
         }
     }
 
