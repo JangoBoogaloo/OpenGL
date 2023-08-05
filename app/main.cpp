@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <cmath>
+#include <functional>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -12,56 +13,18 @@
 #include "Model.h"
 #include "Camera.h"
 #include "Texture.h"
+#include "Input.h"
+#include "AppController.h"
 
 const int DefaultWidth = 1920;
 const int DefaultHeight = 1080;
 const unsigned int ElementPerVertex = 3;
 
-float roll = 0;
-float yaw = 0;
-float pitch = 0;
-
-auto camera = Camera();
-glm::vec3 eye(0, 0, 1);
-glm::vec3 center(0, 0, 0);
-glm::vec3 upDirection(0, 1, 0);
 const auto fovYDegree = 60.0f, zNear = 0.1f, zFar = 99.0f;
 
 static void OnFrameBufferSizeChanged(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
-}
-
-static void OnKeyBoardPressed(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
-        glfwSetWindowShouldClose(window, true);
-        return;
-    }
-    if (action == GLFW_RELEASE) return;
-    switch (key) {
-    case GLFW_KEY_Y:
-        yaw += 1.0f;
-        break;
-    case GLFW_KEY_R:
-        roll += 1.0f;
-        break;
-    case GLFW_KEY_P:
-        pitch += 1.0f;
-        break;
-    case GLFW_KEY_SPACE:
-        yaw = 0;
-        pitch = 0;
-        roll = 0;
-        break;
-    }
-}
-
-static void OnMouseScroll(GLFWwindow* window, double xoffset, double yoffset)
-{
-    eye.z += yoffset;
-    eye.z = fmax(1, eye.z);
-    camera.LookAt(eye, center, upDirection);
 }
 
 static const std::string LoadFileString(const char* filePath)
@@ -132,10 +95,14 @@ int main()
         std::cout << "Failed to initialize GLAD" << std::endl;
         return EXIT_FAILURE;
     }
-    glfwSetFramebufferSizeCallback(window, OnFrameBufferSizeChanged);
-    glfwSetKeyCallback(window, OnKeyBoardPressed);
-    glfwSetScrollCallback(window, OnMouseScroll);
+    auto model = Model();
+    auto appController = AppController();
 
+    glfwSetFramebufferSizeCallback(window, OnFrameBufferSizeChanged);
+    glfwSetKeyCallback(window, Input::OnKeyBoardPressed);
+    glfwSetScrollCallback(window, Input::OnMouseScroll);
+    Input::KeyListeners.push_back(&appController);
+    Input::KeyListeners.push_back(&model);
     glViewport(0, 0, DefaultWidth, DefaultHeight);
 
     //Vertex buffer object
@@ -160,11 +127,9 @@ int main()
         const auto vertexAttributeLocation = ndcShader.GetAttributeLocation("inPosition");
         const auto VertexStride = ElementPerVertex * sizeof(float);
         const auto VertexOffsetPointer = (void*)0;
-
-        auto model = Model();
-        model.Scale(1, 1, 1);
+        auto camera = Camera();
         camera.PerspectiveProjection(fovYDegree, ((float)DefaultWidth) / ((float)DefaultHeight), zNear, zFar);
-        camera.LookAt(eye, center, upDirection);
+        Input::MouseScrollListeners.push_back(&camera);
 
         // vao[location] <- vbo[0]
         GL_EXEC(glVertexAttribPointer(vertexAttributeLocation, ElementPerVertex, GL_FLOAT, GL_FALSE, VertexStride, VertexOffsetPointer));
@@ -173,8 +138,6 @@ int main()
 
         while (!glfwWindowShouldClose(window))
         {
-            model.Rotate(yaw, pitch, roll);
-
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
             ndcShader.Use();

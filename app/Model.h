@@ -1,19 +1,20 @@
 #pragma once
-
 #include <glm.hpp>
+#include "IKeyListener.h"
 
-class Model
+class Model : public IKeyListener
 {
 public:
-	void Scale(float x, float y, float z);
-	void Rotate(float yawDegree, float pitchDegree, float rollDegree);
-	void Translate(float x, float y, float z);
+	glm::vec3 ScaleXYZ;
+	glm::vec3 RotateYPR;
+	glm::vec3 TranslateXYZ;
 	const glm::mat4 GetModelMatrix();
+	void OnKeyBoardPressed(GLFWwindow* window, int key, int scancode, int action, int mods);
 	Model();
 
 private:
-	glm::mat4 scale;
-	glm::mat4 rotation;
-	glm::mat4 translation;
+	glm::mat4 scaleM;
+	glm::mat4 rotationM;
+	glm::mat4 translationM;
 };
 

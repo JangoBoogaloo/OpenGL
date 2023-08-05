@@ -3,6 +3,10 @@
 Camera::Camera()
 {
 	OrthoGraphicProjection(1, -1, 1, -1, 1, -1);
+	eye = glm::vec3(0, 0, 1);
+	target = glm::vec3(0, 0, 0);
+	up = glm::vec3(0, 1, 0);
+	LookAt(eye, target, up);
 }
 
 void Camera::PerspectiveProjection(float fovyDegree, float aspect, float zNear, float zFar)
@@ -22,7 +26,13 @@ void Camera::PerspectiveProjection(float fovyDegree, float aspect, float zNear, 
 	projection = glm::make_mat4(projectionArray);
 }
 
-void Camera::OrthoGraphicProjection(float right, float left, float top, float bottom, float far, float near)
+void Camera::OrthoGraphicProjection(
+	float right, 
+	float left, 
+	float top, 
+	float bottom, 
+	float far, 
+	float near)
 {
 	float centering[] =
 	{
@@ -46,24 +56,26 @@ void Camera::OrthoGraphicProjection(float right, float left, float top, float bo
 	projection[3][3] *= -1;
 }
 
-void Camera::LookAt(glm::vec3 camPosition, glm::vec3 center, glm::vec3 upDirection)
+void Camera::LookAt(glm::vec3 eye, glm::vec3 target, glm::vec3 up)
 {
-	cameraPosition = camPosition;
+	this->eye = eye;
+	this->target = target;
+	this->up = up;
 	float translationArray[] =
 	{
-	  1, 0, 0, -cameraPosition.x,
-	  0, 1, 0, -cameraPosition.y,
-	  0, 0, 1, -cameraPosition.z,
+	  1, 0, 0, -this->eye.x,
+	  0, 1, 0, -this->eye.y,
+	  0, 0, 1, -this->eye.z,
 	  0, 0, 0, 1
 	};
 	glm::mat4 translation = glm::make_mat4(translationArray);
 
 	//Not the actual up from camera's perspective
-	glm::vec3 up = glm::normalize(upDirection);
+	glm::vec3 normalUp = glm::normalize(this->up);
 
 	//actual forward, right, up, need to be normalized before set as rotation matrix
-	glm::vec3 f = glm::normalize(glm::vec3(center - cameraPosition));
-	glm::vec3 r = glm::normalize(glm::cross(f, up));
+	glm::vec3 f = glm::normalize(glm::vec3(this->target - this->eye));
+	glm::vec3 r = glm::normalize(glm::cross(f, normalUp));
 	glm::vec3 u = glm::normalize(glm::cross(r, f));
 
 	float rotationArray[] =
@@ -79,4 +91,14 @@ void Camera::LookAt(glm::vec3 camPosition, glm::vec3 center, glm::vec3 upDirecti
 
 void Camera::AdvanceProjection(glm::mat4 projectionMatrix) {
 	projection = projectionMatrix;
+}
+
+const glm::mat4 Camera::GetView() {
+	return worldToCameraMatrix;
+}
+
+void Camera::OnMouseScroll(GLFWwindow* window, double xoffset, double yoffset)
+{
+	eye.z = fmax(1, eye.z + yoffset);
+	LookAt(eye, target, up);
 }
