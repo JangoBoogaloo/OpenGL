@@ -153,7 +153,8 @@ xcopy "$(ProjectDir)Textures" "$(TargetDir)Textures" /Y /I /E /S</Command>
   <ItemGroup>
     <ClInclude Include="AppController.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="GLErrorCheck.h" />
+    <ClInclude Include="GLHeaders.h" />
+    <ClInclude Include="IFrameBufferSizeListener.h" />
     <ClInclude Include="IKeyListener.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="IMouseScrollListener.h" />

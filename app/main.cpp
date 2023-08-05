@@ -2,12 +2,6 @@
 #include <fstream>
 #include <sstream>
 #include <cmath>
-#include <functional>
-
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
-#include "GLErrorCheck.h"
 #include "Triangle.h"
 #include "Shader.h"
 #include "Model.h"
@@ -18,14 +12,11 @@
 
 const int DefaultWidth = 1920;
 const int DefaultHeight = 1080;
+
 const unsigned int ElementPerVertex = 3;
+const unsigned int ElementPerTex = 2;
 
 const auto fovYDegree = 60.0f, zNear = 0.1f, zFar = 99.0f;
-
-static void OnFrameBufferSizeChanged(GLFWwindow* window, int width, int height)
-{
-    glViewport(0, 0, width, height);
-}
 
 static const std::string LoadFileString(const char* filePath)
 {
@@ -97,12 +88,14 @@ int main()
     }
     auto model = Model();
     auto appController = AppController();
+    auto camera = Camera();
+    camera.PerspectiveProjection(fovYDegree, ((float)DefaultWidth) / ((float)DefaultHeight), zNear, zFar);
 
-    glfwSetFramebufferSizeCallback(window, OnFrameBufferSizeChanged);
-    glfwSetKeyCallback(window, Input::OnKeyBoardPressed);
-    glfwSetScrollCallback(window, Input::OnMouseScroll);
     Input::KeyListeners.push_back(&appController);
+    Input::FrameBufferSizeListeners.push_back(&appController);
     Input::KeyListeners.push_back(&model);
+    Input::MouseScrollListeners.push_back(&camera);
+
     glViewport(0, 0, DefaultWidth, DefaultHeight);
 
     //Vertex buffer object
@@ -117,25 +110,40 @@ int main()
     const unsigned int vertexBufferSize = TriangleShapeVertices.size() * sizeof(float);
     GL_EXEC(glBufferData(GL_ARRAY_BUFFER, vertexBufferSize, TriangleShapeVertices.data(), GL_STATIC_DRAW));
 
+    // 3 generate element buffer object, load into OpenGL to use
+    unsigned int ebo;
+    GL_EXEC(glGenBuffers(1, &ebo));
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, TriangleIndices.size() * sizeof(unsigned int), TriangleIndices.data(), GL_STATIC_DRAW);
+
     {
         const auto vertexProgram = LoadFileString("Shaders\\mvp.vert");
         const auto fragmentProgram = LoadFileString("Shaders\\ndc.frag");
         auto texture = Texture("Textures\\coordinate.jpg");
-        texture.Load(OnLoadTexture);
+        const auto textureId = texture.Load(OnLoadTexture);
+
         auto ndcShader = Shader(vertexProgram.c_str(), fragmentProgram.c_str());
 
         const auto vertexAttributeLocation = ndcShader.GetAttributeLocation("inPosition");
-        const auto VertexStride = ElementPerVertex * sizeof(float);
+        const auto VertexTexStride = (ElementPerVertex + ElementPerTex) * sizeof(float);
         const auto VertexOffsetPointer = (void*)0;
-        auto camera = Camera();
-        camera.PerspectiveProjection(fovYDegree, ((float)DefaultWidth) / ((float)DefaultHeight), zNear, zFar);
-        Input::MouseScrollListeners.push_back(&camera);
 
         // vao[location] <- vbo[0]
-        GL_EXEC(glVertexAttribPointer(vertexAttributeLocation, ElementPerVertex, GL_FLOAT, GL_FALSE, VertexStride, VertexOffsetPointer));
-        //The reason why the fuck we need this: https://www.gamedev.net/forums/topic/655785-is-glenablevertexattribarray-redundant/
+        GL_EXEC(glVertexAttribPointer(vertexAttributeLocation, ElementPerVertex, GL_FLOAT, GL_FALSE, VertexTexStride, VertexOffsetPointer));
         GL_EXEC(glEnableVertexAttribArray(vertexAttributeLocation));
 
+        const unsigned int TextureLayoutLocation = ndcShader.GetAttributeLocation("inTexCoord");
+        const unsigned int VertexStride = ElementPerVertex * sizeof(float);
+        const void* const TextureOffsetPointer = (void*)VertexStride;
+
+        GL_EXEC(glVertexAttribPointer(TextureLayoutLocation, ElementPerTex, GL_FLOAT, GL_FALSE, VertexTexStride, TextureOffsetPointer));
+        GL_EXEC(glEnableVertexAttribArray(TextureLayoutLocation));
+
+        glfwSetFramebufferSizeCallback(window, Input::OnFrameBufferSizeChanged);
+        glfwSetKeyCallback(window, Input::OnKeyBoardPressed);
+        glfwSetScrollCallback(window, Input::OnMouseScroll);
+        glActiveTexture(GL_TEXTURE0);
+        GL_EXEC(glBindTexture(GL_TEXTURE_2D, textureId));
         while (!glfwWindowShouldClose(window))
         {
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -145,10 +153,13 @@ int main()
             ndcShader.SetUniformMatrix4fv("view", glm::transpose(camera.GetView()));
             ndcShader.SetUniformMatrix4fv("projection", glm::transpose(camera.GetProjection()));
             GL_EXEC(glBindVertexArray(vao));
-            GL_EXEC(glDrawArrays(GL_TRIANGLES, 0, TriangleShapeVertices.size()));
+            GL_EXEC(glDrawElements(GL_TRIANGLES, TriangleIndices.size(), GL_UNSIGNED_INT, 0));
             glfwPollEvents();
             glfwSwapBuffers(window);
         }
+        GL_EXEC(glDeleteVertexArrays(1, &vao));
+        GL_EXEC(glDeleteBuffers(1, &vbo));
+        GL_EXEC(glDeleteBuffers(1, &ebo));
     }
     glfwTerminate();
     return EXIT_SUCCESS;

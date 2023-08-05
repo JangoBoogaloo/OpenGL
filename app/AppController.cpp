@@ -6,3 +6,8 @@ void AppController::OnKeyBoardPressed(GLFWwindow* window, int key, int scancode,
         glfwSetWindowShouldClose(window, true);
     }
 }
+
+void AppController::OnFrameBufferSizeChanged(GLFWwindow* window, int width, int height)
+{
+    glViewport(0, 0, width, height);
+}

@@ -1,5 +1,5 @@
 #include "Shader.h"
-#include "GLErrorCheck.h"
+#include "GLHeaders.h"
 #include <gtc/type_ptr.hpp>
 
 Shader::Shader(const char* vertexProgram, const char* fragmentProgram)

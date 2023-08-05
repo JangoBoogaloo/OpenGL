@@ -1,5 +1,5 @@
 #include "Texture.h"
-#include "GLErrorCheck.h"
+#include "GLHeaders.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
