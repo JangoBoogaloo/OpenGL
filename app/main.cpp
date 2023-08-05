@@ -119,8 +119,12 @@ int main()
     {
         const auto vertexProgram = LoadFileString("Shaders\\mvp.vert");
         const auto fragmentProgram = LoadFileString("Shaders\\ndc.frag");
-        auto texture = Texture("Textures\\coordinate.jpg");
-        const auto textureId = texture.Load(OnLoadTexture);
+        {
+            auto texture = Texture("Textures\\coordinate.jpg");
+            const auto textureId = texture.Load(OnLoadTexture);
+            glActiveTexture(GL_TEXTURE0);
+            GL_EXEC(glBindTexture(GL_TEXTURE_2D, textureId));
+        }
 
         auto ndcShader = Shader(vertexProgram.c_str(), fragmentProgram.c_str());
 
@@ -142,8 +146,7 @@ int main()
         glfwSetFramebufferSizeCallback(window, Input::OnFrameBufferSizeChanged);
         glfwSetKeyCallback(window, Input::OnKeyBoardPressed);
         glfwSetScrollCallback(window, Input::OnMouseScroll);
-        glActiveTexture(GL_TEXTURE0);
-        GL_EXEC(glBindTexture(GL_TEXTURE_2D, textureId));
+
         while (!glfwWindowShouldClose(window))
         {
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
