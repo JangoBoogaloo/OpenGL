@@ -50,9 +50,6 @@
     <ClInclude Include="Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GLErrorCheck.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Triangle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -80,17 +77,20 @@
     <ClInclude Include="AppController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GLHeaders.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IFrameBufferSizeListener.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Shaders\mvp.vert">
+    <Text Include="Shaders\TextureMVP.vert">
       <Filter>Resource Files\Shaders</Filter>
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\ndc.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Shaders\ndc.vert">
+    <None Include="Shaders\TextureMVP.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>

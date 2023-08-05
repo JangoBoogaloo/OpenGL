@@ -117,8 +117,8 @@ int main()
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, TriangleIndices.size() * sizeof(unsigned int), TriangleIndices.data(), GL_STATIC_DRAW);
 
     {
-        const auto vertexProgram = LoadFileString("Shaders\\mvp.vert");
-        const auto fragmentProgram = LoadFileString("Shaders\\ndc.frag");
+        const auto vertexProgram = LoadFileString("Shaders\\TextureMVP.vert");
+        const auto fragmentProgram = LoadFileString("Shaders\\TextureMVP.frag");
         {
             auto texture = Texture("Textures\\coordinate.jpg");
             const auto textureId = texture.Load(OnLoadTexture);
