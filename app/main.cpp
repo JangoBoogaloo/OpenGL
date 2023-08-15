@@ -2,7 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <cmath>
-#include "Triangle.h"
+#include "Rectangle.h"
 #include "Shader.h"
 #include "Model.h"
 #include "Camera.h"
@@ -107,14 +107,14 @@ int main()
     // 2. copy our vertices array in a buffer for OpenGL to use
     GL_EXEC(glBindVertexArray(vao));
     GL_EXEC(glBindBuffer(GL_ARRAY_BUFFER, vbo));
-    const unsigned int vertexBufferSize = TriangleShapeVertices.size() * sizeof(float);
-    GL_EXEC(glBufferData(GL_ARRAY_BUFFER, vertexBufferSize, TriangleShapeVertices.data(), GL_STATIC_DRAW));
+    const unsigned int vertexBufferSize = RectangleShapeVertices.size() * sizeof(float);
+    GL_EXEC(glBufferData(GL_ARRAY_BUFFER, vertexBufferSize, RectangleShapeVertices.data(), GL_STATIC_DRAW));
 
     // 3 generate element buffer object, load into OpenGL to use
     unsigned int ebo;
     GL_EXEC(glGenBuffers(1, &ebo));
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, TriangleIndices.size() * sizeof(unsigned int), TriangleIndices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, RectangleIndices.size() * sizeof(unsigned int), RectangleIndices.data(), GL_STATIC_DRAW);
 
     {
         const auto vertexProgram = LoadFileString("Shaders\\TextureMVP.vert");
@@ -149,14 +149,14 @@ int main()
 
         while (!glfwWindowShouldClose(window))
         {
-            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT);
+            GL_EXEC(glClearColor(0.2f, 0.3f, 0.3f, 1.0f));
+            GL_EXEC(glClear(GL_COLOR_BUFFER_BIT));
             ndcShader.Use();
             ndcShader.SetUniformMatrix4fv("model", glm::transpose(model.GetModelMatrix()));
             ndcShader.SetUniformMatrix4fv("view", glm::transpose(camera.GetView()));
             ndcShader.SetUniformMatrix4fv("projection", glm::transpose(camera.GetProjection()));
             GL_EXEC(glBindVertexArray(vao));
-            GL_EXEC(glDrawElements(GL_TRIANGLES, TriangleIndices.size(), GL_UNSIGNED_INT, 0));
+            GL_EXEC(glDrawElements(GL_TRIANGLES, RectangleIndices.size(), GL_UNSIGNED_INT, 0));
             glfwPollEvents();
             glfwSwapBuffers(window);
         }

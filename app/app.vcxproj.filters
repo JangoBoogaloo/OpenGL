@@ -80,8 +80,11 @@
     <ClInclude Include="GLHeaders.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IFrameBufferSizeListener.h">
+    <ClInclude Include="Rectangle.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IFrameBufferSizeListener.h">
+      <Filter>Header Files\Input</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

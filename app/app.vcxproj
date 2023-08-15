@@ -159,6 +159,7 @@ xcopy "$(ProjectDir)Textures" "$(TargetDir)Textures" /Y /I /E /S</Command>
     <ClInclude Include="Input.h" />
     <ClInclude Include="IMouseScrollListener.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="Rectangle.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Texture.h" />
