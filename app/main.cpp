@@ -9,6 +9,8 @@
 #include "Texture.h"
 #include "Input.h"
 #include "AppController.h"
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
 
 const int DefaultWidth = 1920;
 const int DefaultHeight = 1080;
@@ -67,6 +69,13 @@ static unsigned int OnLoadTexture(int width, int height, int nrChannel, const un
 
 int main()
 {
+    Assimp::Importer Importer;
+    auto modelFile = "C:\\Users\\Xiang Guo\\Desktop\\teapot.obj";
+    auto pScene = Importer.ReadFile(modelFile, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_JoinIdenticalVertices);
+    if (!pScene) {
+        std::cerr << "Invalid model file: " << modelFile << std::endl;
+        return EXIT_FAILURE;
+    }
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
