@@ -48,30 +48,10 @@ static const std::string LoadFileString(const char* filePath)
     }
 }
 
-static unsigned int OnLoadTexture(int width, int height, int nrChannel, const unsigned char* data)
-{
-    unsigned int textureID;
-    GL_EXEC(glGenTextures(1, &textureID));
-    GL_EXEC(glBindTexture(GL_TEXTURE_2D, textureID));
-    // set the texture wrapping/filtering options (on the currently bound texture object)
-    GL_EXEC(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-    GL_EXEC(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-
-    //When scale down, make it more blocked pattern
-    GL_EXEC(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
-    //When scale up, make it more linear pattern
-    GL_EXEC(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-
-    GL_EXEC(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data));
-    GL_EXEC(glGenerateMipmap(GL_TEXTURE_2D));
-    GL_EXEC(glBindTexture(GL_TEXTURE_2D, 0));
-    return textureID;
-}
-
 int main()
 {
     Assimp::Importer Importer;
-    auto modelFile = "C:\\Users\\Xiang Guo\\Desktop\\teapot.obj";
+    auto modelFile = "..\\Models\\teapot.obj";
     auto pScene = Importer.ReadFile(modelFile, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_JoinIdenticalVertices);
     if (!pScene) {
         std::cerr << "Invalid model file: " << modelFile << std::endl;
