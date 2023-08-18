@@ -149,7 +149,7 @@ xcopy "$(ProjectDir)Textures" "$(TargetDir)Textures" /Y /I /E /S</Command>
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TextureLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppController.h" />
@@ -164,7 +164,7 @@ xcopy "$(ProjectDir)Textures" "$(TargetDir)Textures" /Y /I /E /S</Command>
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stb_image.h" />
-    <ClInclude Include="Texture.h" />
+    <ClInclude Include="TextureLoader.h" />
     <ClInclude Include="Triangle.h" />
   </ItemGroup>
   <ItemGroup>

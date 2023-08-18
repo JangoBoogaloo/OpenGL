@@ -6,10 +6,11 @@
 #include "Shader.h"
 #include "Model.h"
 #include "Camera.h"
-#include "Texture.h"
+#include "TextureLoader.h"
 #include "Input.h"
 #include "AppController.h"
 #include <assimp/Importer.hpp>
+#include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
 const int DefaultWidth = 1920;
@@ -76,6 +77,7 @@ int main()
         std::cerr << "Invalid model file: " << modelFile << std::endl;
         return EXIT_FAILURE;
     }
+    auto a = pScene->mMeshes;
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -128,12 +130,9 @@ int main()
     {
         const auto vertexProgram = LoadFileString("Shaders\\TextureMVP.vert");
         const auto fragmentProgram = LoadFileString("Shaders\\TextureMVP.frag");
-        {
-            auto texture = Texture("Textures\\coordinate.jpg");
-            const auto textureId = texture.Load(OnLoadTexture);
-            glActiveTexture(GL_TEXTURE0);
-            GL_EXEC(glBindTexture(GL_TEXTURE_2D, textureId));
-        }
+        const auto textureId = TextureLoader::TextureFromFile("Textures\\coordinate.jpg");
+        GL_EXEC(glActiveTexture(GL_TEXTURE0));
+        GL_EXEC(glBindTexture(GL_TEXTURE_2D, textureId));
 
         auto ndcShader = Shader(vertexProgram.c_str(), fragmentProgram.c_str());
 

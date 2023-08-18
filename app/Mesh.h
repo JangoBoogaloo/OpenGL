@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <glm/glm.hpp>
-#include "Texture.h"
+#include <string>
 
 struct Vertex
 {
@@ -10,12 +10,18 @@ struct Vertex
     glm::vec2 TexCoords;
 };
 
+struct Texture
+{
+    unsigned int TextureId;
+    std::string type;
+};
+
 class Mesh
 {
 public:
     std::vector<Vertex> vertices;
-    std::vector<unsigned int> indices;
     std::vector<Texture> textures;
+    std::vector<unsigned int> indices;
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
 };
 
