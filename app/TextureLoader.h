@@ -2,6 +2,6 @@
 class TextureLoader
 {
 public:
-    static int TextureFromFile(const char* textureFile);
+    static int TextureFromFile(const char* textureFile, bool flip = true);
 };
 

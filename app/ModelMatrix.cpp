@@ -1,6 +1,8 @@
-#include "Model.h"
+#include "ModelMatrix.h"
 
 #include <gtc/type_ptr.hpp>
+
+using namespace Matrix;
 
 static inline glm::mat4 Scale(float x, float y, float z)
 {
@@ -65,7 +67,7 @@ static inline glm::mat4 RotateRoll(const float rollDegree)
 	return glm::make_mat4(rotRollArray);
 }
 
-const glm::mat4 Model::GetModelMatrix()
+const glm::mat4 ModelMatrix::GetModelMatrix()
 {
 	translationM = Translate(TranslateXYZ.x, TranslateXYZ.y, TranslateXYZ.z);
 	rotationM = RotateYaw(RotateYPR.x) * RotatePitch(RotateYPR.y) * RotateRoll(RotateYPR.z);
@@ -76,7 +78,7 @@ const glm::mat4 Model::GetModelMatrix()
 	return result;
 }
 
-Model::Model()
+ModelMatrix::ModelMatrix()
 {
 	ScaleXYZ = glm::vec3(1, 1, 1);
 	RotateYPR = glm::vec3();
@@ -86,7 +88,7 @@ Model::Model()
 	translationM = glm::mat4(1);
 }
 
-void Model::OnKey(GLFWwindow* window, int key, int scancode, int action, int mods)
+void ModelMatrix::OnKey(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	if (action == GLFW_RELEASE) return;
 	switch (key) {

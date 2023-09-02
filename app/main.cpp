@@ -4,7 +4,7 @@
 #include <cmath>
 #include "Rectangle.h"
 #include "Shader.h"
-#include "Model.h"
+#include "ModelMatrix.h"
 #include "Camera.h"
 #include "TextureLoader.h"
 #include "Input.h"
@@ -52,7 +52,13 @@ int main()
 {
     Assimp::Importer Importer;
     auto modelFile = "..\\Models\\teapot.obj";
-    auto pScene = Importer.ReadFile(modelFile, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_JoinIdenticalVertices);
+    auto pScene = Importer.ReadFile(modelFile, 
+        aiProcess_Triangulate | 
+        aiProcess_GenSmoothNormals | 
+        aiProcess_FlipUVs | 
+        aiProcess_CalcTangentSpace | 
+        aiProcess_JoinIdenticalVertices);
+
     if (!pScene) {
         std::cerr << "Invalid model file: " << modelFile << std::endl;
         return EXIT_FAILURE;
@@ -77,9 +83,9 @@ int main()
         std::cout << "Failed to initialize GLAD" << std::endl;
         return EXIT_FAILURE;
     }
-    auto model = Model();
+    auto model = Matrix::ModelMatrix();
     auto appController = AppController();
-    auto camera = Camera();
+    auto camera = Matrix::Camera();
     camera.PerspectiveProjection(fovYDegree, ((float)DefaultWidth) / ((float)DefaultHeight), zNear, zFar);
 
     Input::KeyListeners.push_back(&appController);

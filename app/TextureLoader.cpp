@@ -5,9 +5,9 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-int TextureLoader::TextureFromFile(const char* textureFile) {
+int TextureLoader::TextureFromFile(const char* textureFile, bool flip) {
     // tell stb_image.h to flip loaded texture's on the y-axis.
-    stbi_set_flip_vertically_on_load(true);
+    stbi_set_flip_vertically_on_load(flip);
     int width, height, nrChannels;
     auto data = stbi_load(textureFile, &width, &height, &nrChannels, 0);
     if (!data) {

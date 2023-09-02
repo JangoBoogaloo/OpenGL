@@ -22,6 +22,12 @@
     <Filter Include="Header Files\Input">
       <UniqueIdentifier>{51d6dcb9-61a3-4976-8f7a-36f9375b9508}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Matrix">
+      <UniqueIdentifier>{897b5bce-8e8a-483b-a8de-bd826b1eb0f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Matrix">
+      <UniqueIdentifier>{9ceb3dd4-936d-4702-a66b-3081a67b8e40}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -31,9 +37,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
@@ -48,6 +51,9 @@
     <ClCompile Include="TextureLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ModelMatrix.cpp">
+      <Filter>Source Files\Matrix</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
@@ -56,16 +62,7 @@
     <ClInclude Include="Triangle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="stb_image.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IMouseScrollListener.h">
@@ -91,6 +88,15 @@
     </ClInclude>
     <ClInclude Include="TextureLoader.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelMatrix.h">
+      <Filter>Header Files\Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files\Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Header Files\Input</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
