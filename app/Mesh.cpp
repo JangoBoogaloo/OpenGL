@@ -35,12 +35,12 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
     GL_EXEC(glBindVertexArray(0));
 }
 
-void Mesh::Draw(Shader& Shader) {
+void Mesh::Draw(Shader& shader) {
 
     // draw mesh
-    glBindVertexArray(vao);
-    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0);
+    GL_EXEC(glBindVertexArray(vao));
+    GL_EXEC(glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0));
+    GL_EXEC(glBindVertexArray(0));
 }
 
 Mesh::~Mesh()

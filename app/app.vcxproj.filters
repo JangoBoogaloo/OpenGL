@@ -28,6 +28,12 @@
     <Filter Include="Source Files\Matrix">
       <UniqueIdentifier>{9ceb3dd4-936d-4702-a66b-3081a67b8e40}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Model">
+      <UniqueIdentifier>{faea73e2-b1f8-4529-aefb-c4757e372224}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Model">
+      <UniqueIdentifier>{7aec3800-2563-4584-8bb1-73ccac70813b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -45,14 +51,17 @@
     <ClCompile Include="AppController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TextureLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ModelMatrix.cpp">
       <Filter>Source Files\Matrix</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -83,9 +92,6 @@
     <ClInclude Include="IFrameBufferSizeListener.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TextureLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -97,6 +103,12 @@
     </ClInclude>
     <ClInclude Include="Input.h">
       <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Header Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

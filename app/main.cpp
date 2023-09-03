@@ -9,9 +9,7 @@
 #include "TextureLoader.h"
 #include "Input.h"
 #include "AppController.h"
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
+#include "Model.h"
 
 const int DefaultWidth = 1920;
 const int DefaultHeight = 1080;
@@ -50,20 +48,6 @@ static const std::string LoadFileString(const char* filePath)
 
 int main()
 {
-    Assimp::Importer Importer;
-    auto modelFile = "..\\Models\\teapot.obj";
-    auto pScene = Importer.ReadFile(modelFile, 
-        aiProcess_Triangulate | 
-        aiProcess_GenSmoothNormals | 
-        aiProcess_FlipUVs | 
-        aiProcess_CalcTangentSpace | 
-        aiProcess_JoinIdenticalVertices);
-
-    if (!pScene) {
-        std::cerr << "Invalid model file: " << modelFile << std::endl;
-        return EXIT_FAILURE;
-    }
-    auto a = pScene->mMeshes;
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -83,17 +67,17 @@ int main()
         std::cout << "Failed to initialize GLAD" << std::endl;
         return EXIT_FAILURE;
     }
-    auto model = Matrix::ModelMatrix();
+    auto modelMatrix = Matrix::ModelMatrix();
     auto appController = AppController();
     auto camera = Matrix::Camera();
     camera.PerspectiveProjection(fovYDegree, ((float)DefaultWidth) / ((float)DefaultHeight), zNear, zFar);
 
     Input::KeyListeners.push_back(&appController);
     Input::FrameBufferSizeListeners.push_back(&appController);
-    Input::KeyListeners.push_back(&model);
+    Input::KeyListeners.push_back(&modelMatrix);
     Input::MouseScrollListeners.push_back(&camera);
 
-    glViewport(0, 0, DefaultWidth, DefaultHeight);
+    GL_EXEC(glViewport(0, 0, DefaultWidth, DefaultHeight));
 
     //Vertex buffer object
     unsigned int vao;
@@ -114,15 +98,18 @@ int main()
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, RectangleIndices.size() * sizeof(unsigned int), RectangleIndices.data(), GL_STATIC_DRAW);
 
     {
+        auto modelFile = "..\\Models\\teapot.obj";
+        auto model = Model(modelFile);
+
         const auto vertexProgram = LoadFileString("Shaders\\TextureMVP.vert");
         const auto fragmentProgram = LoadFileString("Shaders\\TextureMVP.frag");
         const auto textureId = TextureLoader::TextureFromFile("Textures\\coordinate.jpg");
         GL_EXEC(glActiveTexture(GL_TEXTURE0));
         GL_EXEC(glBindTexture(GL_TEXTURE_2D, textureId));
 
-        auto ndcShader = Shader(vertexProgram.c_str(), fragmentProgram.c_str());
+        auto shader = Shader(vertexProgram.c_str(), fragmentProgram.c_str());
 
-        const auto vertexAttributeLocation = ndcShader.GetAttributeLocation("inPosition");
+        const auto vertexAttributeLocation = shader.GetAttributeLocation("inPosition");
         const auto VertexTexStride = (ElementPerVertex + ElementPerTex) * sizeof(float);
         const auto VertexOffsetPointer = (void*)0;
 
@@ -130,7 +117,7 @@ int main()
         GL_EXEC(glVertexAttribPointer(vertexAttributeLocation, ElementPerVertex, GL_FLOAT, GL_FALSE, VertexTexStride, VertexOffsetPointer));
         GL_EXEC(glEnableVertexAttribArray(vertexAttributeLocation));
 
-        const unsigned int TextureLayoutLocation = ndcShader.GetAttributeLocation("inTexCoord");
+        const unsigned int TextureLayoutLocation = shader.GetAttributeLocation("inTexCoord");
         const unsigned int VertexStride = ElementPerVertex * sizeof(float);
         const void* const TextureOffsetPointer = (void*)VertexStride;
 
@@ -145,10 +132,10 @@ int main()
         {
             GL_EXEC(glClearColor(0.2f, 0.3f, 0.3f, 1.0f));
             GL_EXEC(glClear(GL_COLOR_BUFFER_BIT));
-            ndcShader.Use();
-            ndcShader.SetUniformMatrix4fv("model", glm::transpose(model.GetModelMatrix()));
-            ndcShader.SetUniformMatrix4fv("view", glm::transpose(camera.GetView()));
-            ndcShader.SetUniformMatrix4fv("projection", glm::transpose(camera.GetProjection()));
+            shader.Use();
+            shader.SetUniformMatrix4fv("model", glm::transpose(modelMatrix.GetModelMatrix()));
+            shader.SetUniformMatrix4fv("view", glm::transpose(camera.GetView()));
+            shader.SetUniformMatrix4fv("projection", glm::transpose(camera.GetProjection()));
             GL_EXEC(glBindVertexArray(vao));
             GL_EXEC(glDrawElements(GL_TRIANGLES, RectangleIndices.size(), GL_UNSIGNED_INT, 0));
             glfwPollEvents();
