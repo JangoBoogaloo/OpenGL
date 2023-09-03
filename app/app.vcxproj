@@ -110,11 +110,12 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\lib-vc2022;..\lib-vc2022</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\lib-vc2022;</AdditionalLibraryDirectories>
       <AdditionalDependencies>glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(ProjectDir)Shaders" "$(TargetDir)Shaders" /Y /I /E /S</Command>
+      <Command>xcopy "$(ProjectDir)Shaders" "$(TargetDir)Shaders" /Y /I /E /S
+xcopy "$(ProjectDir)Textures" "$(TargetDir)Textures" /Y /I /E /S</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -133,31 +134,45 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\lib-vc2022;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(ProjectDir)Shaders" "$(TargetDir)Shaders" /Y /I /E /S</Command>
+      <Command>xcopy "$(ProjectDir)Shaders" "$(TargetDir)Shaders" /Y /I /E /S
+xcopy "$(ProjectDir)Textures" "$(TargetDir)Textures" /Y /I /E /S</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AppController.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AppController.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="GLErrorCheck.h" />
+    <ClInclude Include="GLHeaders.h" />
+    <ClInclude Include="IFrameBufferSizeListener.h" />
+    <ClInclude Include="IKeyListener.h" />
+    <ClInclude Include="Input.h" />
+    <ClInclude Include="IMouseScrollListener.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="Rectangle.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="stb_image.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="Triangle.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Shaders\mvp.vert" />
+    <Text Include="Shaders\TextureMVP.vert" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\ndc.frag" />
-    <None Include="Shaders\ndc.vert" />
+    <None Include="Shaders\TextureMVP.frag" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Textures\coordinate.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

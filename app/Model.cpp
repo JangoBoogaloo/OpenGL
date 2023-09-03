@@ -2,7 +2,7 @@
 
 #include <gtc/type_ptr.hpp>
 
-void Model::Scale(float x, float y, float z)
+static inline glm::mat4 Scale(float x, float y, float z)
 {
 	float scaleMat[] =
 	{
@@ -11,10 +11,10 @@ void Model::Scale(float x, float y, float z)
 	  0, 0, z, 0,
 	  0, 0, 0, 1
 	};
-	scale = glm::make_mat4(scaleMat);
+	return glm::make_mat4(scaleMat);
 }
 
-void Model::Translate(float x, float y, float z)
+static inline glm::mat4 Translate(float x, float y, float z)
 {
 	float translateMat[]
 	{
@@ -23,7 +23,7 @@ void Model::Translate(float x, float y, float z)
 	  0, 0, 1, z,
 	  0, 0, 0, 1
 	};
-	translation = glm::make_mat4(translateMat);
+	return glm::make_mat4(translateMat);
 }
 
 static inline glm::mat4 RotateYaw(const float yawDegree)
@@ -65,22 +65,42 @@ static inline glm::mat4 RotateRoll(const float rollDegree)
 	return glm::make_mat4(rotRollArray);
 }
 
-void Model::Rotate(const float yawDegree, const float pitchDegree, const float rollDegree)
-{
-	rotation = RotateYaw(yawDegree) * RotatePitch(pitchDegree) * RotateRoll(rollDegree);
-}
-
 const glm::mat4 Model::GetModelMatrix()
 {
+	translationM = Translate(TranslateXYZ.x, TranslateXYZ.y, TranslateXYZ.z);
+	rotationM = RotateYaw(RotateYPR.x) * RotatePitch(RotateYPR.y) * RotateRoll(RotateYPR.z);
+	scaleM = Scale(ScaleXYZ.x, ScaleXYZ.y, ScaleXYZ.z);
 	//return translation * rotation * scale;
 	//transpose(T) * transpose(R) * transpose(S) = transpose(S * R * T)
-	auto result = scale * rotation * translation;
+	auto result = scaleM * rotationM * translationM;
 	return result;
 }
 
 Model::Model()
 {
-	scale = glm::mat4(1);
-	rotation = glm::mat4(1);
-	translation = glm::mat4(1);
+	ScaleXYZ = glm::vec3(1, 1, 1);
+	RotateYPR = glm::vec3();
+	TranslateXYZ = glm::vec3();
+	scaleM = glm::mat4(1);
+	rotationM = glm::mat4(1);
+	translationM = glm::mat4(1);
+}
+
+void Model::OnKey(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	if (action == GLFW_RELEASE) return;
+	switch (key) {
+	case GLFW_KEY_Y:
+		RotateYPR.x += 1.0f;
+		break;
+	case GLFW_KEY_R:
+		RotateYPR.y += 1.0f;
+		break;
+	case GLFW_KEY_P:
+		RotateYPR.z += 1.0f;
+		break;
+	case GLFW_KEY_SPACE:
+		RotateYPR = glm::vec3();
+		break;
+	}
 }

@@ -3,22 +3,25 @@
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
+#include "IMouseScrollListener.h"
 
-class Camera
+class Camera : public IMouseScrollListener
 {
 private:
+	glm::vec3 eye;
+	glm::vec3 target;
+	glm::vec3 up;
 	glm::mat4 projection;
 	glm::mat4 worldToCameraMatrix;
-	glm::vec3 cameraPosition;
+
 public:
 	Camera();
 	void PerspectiveProjection(float fovyDegree, float aspect, float zNear, float zFar);
 	void OrthoGraphicProjection(float left, float right, float top, float bottom, float far, float near);
-	void LookAt(glm::vec3 camPosition, glm::vec3 center, glm::vec3 upDirection);
 	void AdvanceProjection(glm::mat4 projectionMatrix);
-
-	const glm::vec3 GetCameraPosition() { return cameraPosition; }
+	void LookAt(glm::vec3 eye, glm::vec3 target, glm::vec3 up);
 	const glm::mat4 GetProjection() { return projection; }
-	const glm::mat4 GetView() { return worldToCameraMatrix; }
+	const glm::mat4 GetView();
+	void OnMouseScroll(GLFWwindow* window, double xoffset, double yoffset);
 };
 
