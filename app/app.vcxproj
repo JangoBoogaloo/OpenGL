@@ -173,6 +173,8 @@ xcopy "$(ProjectDir)Textures" "$(TargetDir)Textures" /Y /I /E /S</Command>
     <Text Include="Shaders\TextureMVP.vert" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\Color.frag" />
+    <None Include="Shaders\Color.vert" />
     <None Include="Shaders\TextureMVP.frag" />
   </ItemGroup>
   <ItemGroup>

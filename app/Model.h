@@ -13,6 +13,9 @@ class Model
 {
 public:
     Model(const char* path);
+    void Draw(Shader& shader);
+    const std::vector<Mesh> Meshes() const { return meshes; }
+    void LoadToGPU(int vertexAL, int normAL, int textureAL);
 private:
     std::vector<Mesh> meshes;
     void ProcessNode(aiNode* node, const aiScene* scene);

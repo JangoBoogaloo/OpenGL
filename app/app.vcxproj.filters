@@ -108,7 +108,7 @@
       <Filter>Header Files\Model</Filter>
     </ClInclude>
     <ClInclude Include="Model.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -118,6 +118,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\TextureMVP.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Shaders\Color.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Shaders\Color.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>

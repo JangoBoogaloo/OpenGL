@@ -94,3 +94,18 @@ Model::Model(const char* path)
     }
     ProcessNode(scene->mRootNode, scene);
 }
+
+
+void Model::Draw(Shader& shader)
+{
+    for (auto i = 0; i < meshes.size(); i++) {
+        meshes[i].Draw(shader);
+    }
+}
+
+void Model::LoadToGPU(int vertexAL, int normAL, int textureAL)
+{
+    for (auto i = 0; i < meshes.size(); i++) {
+        meshes[i].LoadToGPU(vertexAL, normAL, textureAL);
+    }
+}
